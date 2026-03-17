@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>To-Do List</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #0d0d0d;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* CONTAINER */
+.container {
+    background: #1a1a1a;
+    padding: 30px;
+    border-radius: 12px;
+    width: 400px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+/* TÍTULO */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* INPUTS */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+input {
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+}
+
+/* BOTÃO */
+button {
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #ccc;
+}
+
+/* LISTA */
+ul {
+    margin-top: 20px;
+}
+
+li {
+    background: #262626;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+/* TAREFA */
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task-buttons button {
+    margin-left: 5px;
+}
+
+/* CONCLUÍDA */
+.concluida {
+    text-decoration: line-through;
+    opacity: 0.6;
+}
+
+/* DATA */
+.data {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 5px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+    <h1> To-Do List</h1>
+
+    <div class="input-group">
+        <input type="text" id="inputTarefa" placeholder="Digite a tarefa...">
+        <input type="date" id="inputData">
+        <button id="btnAdicionar">Adicionar</button>
+    </div>
+
+    <h3>Total: <span id="contador">0</span></h3>
+
+    <ul id="listaTarefas"></ul>
+</div>
+
+<script>
+
+// ELEMENTOS
+const inputTarefa = document.getElementById("inputTarefa");
+const inputData = document.getElementById("inputData");
+const lista = document.getElementById("listaTarefas");
+const contadorEl = document.getElementById("contador");
+const btnAdicionar = document.getElementById("btnAdicionar");
+
+// ESTADO
+let totalTarefas = 0;
+
+// EVENTO
+btnAdicionar.addEventListener("click", adicionarTarefa);
+
+// FUNÇÕES
+function validarEntrada(texto, data) {
+    if (!texto || !data) {
+        alert("Preencha todos os campos!");
+        return false;
+    }
+
+    if (texto.length < 3) {
+        alert("A tarefa deve ter no mínimo 3 caracteres!");
+        return false;
+    }
+
+    return true;
+}
+
+function atualizarContador() {
+    contadorEl.textContent = totalTarefas;
+}
+
+function criarBotao(texto, classe, acao) {
+    const botao = document.createElement("button");
+    botao.textContent = texto;
+    botao.classList.add(classe);
+    botao.addEventListener("click", acao);
+    return botao;
+}
+
+function adicionarTarefa() {
+    const texto = inputTarefa.value.trim();
+    const data = inputData.value;
+
+    if (!validarEntrada(texto, data)) return;
+
+    const li = document.createElement("li");
+
+    const header = document.createElement("div");
+    header.classList.add("task-header");
+
+    const spanTexto = document.createElement("span");
+    spanTexto.textContent = texto;
+
+    const botoes = document.createElement("div");
+    botoes.classList.add("task-buttons");
+
+    const btnConcluir = criarBotao("✔", "concluir", () => {
+        li.classList.toggle("concluida");
+    });
+
+    const btnRemover = criarBotao("✖", "remover", () => {
+        lista.removeChild(li);
+        totalTarefas--;
+        atualizarContador();
+    });
+
+    botoes.appendChild(btnConcluir);
+    botoes.appendChild(btnRemover);
+
+    header.appendChild(spanTexto);
+    header.appendChild(botoes);
+
+    const spanData = document.createElement("div");
+    spanData.classList.add("data");
+    spanData.textContent = "📅 " + data;
+
+    li.appendChild(header);
+    li.appendChild(spanData);
+
+    lista.appendChild(li);
+
+    totalTarefas++;
+    atualizarContador();
+
+    inputTarefa.value = "";
+    inputData.value = "";
+}
+
+</script>
+
+</body>
+</html>
